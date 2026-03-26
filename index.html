@@ -586,9 +586,18 @@ let currentSheet = Object.keys(SHEETS)[0];
 let columnsBySheet = {};
 let grades = {};
 let colIdCounter = 0;
-const STORAGE_KEY = 'notas_app_estado_v4';
+const STORAGE_KEY = 'notas_2026_estado_v1';
 
-// Cada curso tendrá sus propias actividades y sus propias notas
+// Init storage
+Object.keys(SHEETS).forEach(s => {
+  if (!columnsBySheet[s]) columnsBySheet[s] = [];
+  if (!grades[s]) grades[s] = {};
+});
+
+function getColumnsForSheet(sheetName = currentSheet) {
+  return columnsBySheet[sheetName] || [];
+}
+
 function ensureStateShape() {
   Object.keys(SHEETS).forEach(s => {
     if (!Array.isArray(columnsBySheet[s])) columnsBySheet[s] = [];
@@ -597,25 +606,25 @@ function ensureStateShape() {
   if (!SHEETS[currentSheet]) currentSheet = Object.keys(SHEETS)[0];
 }
 
-function getColumnsForSheet(sheetName = currentSheet) {
-  return columnsBySheet[sheetName] || [];
-}
-
 function saveState() {
   try {
-    const state = { currentSheet, columnsBySheet, grades, colIdCounter };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      currentSheet,
+      columnsBySheet,
+      grades,
+      colIdCounter
+    }));
   } catch (err) {
     console.error('Error guardando estado local:', err);
   }
 }
 
-function loadState() {
+function loadLocalState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       ensureStateShape();
-      return;
+      return false;
     }
     const state = JSON.parse(raw);
     currentSheet = state.currentSheet || currentSheet;
@@ -623,16 +632,50 @@ function loadState() {
     grades = state.grades || {};
     colIdCounter = state.colIdCounter || 0;
     ensureStateShape();
+    return true;
   } catch (err) {
     console.error('Error cargando estado local:', err);
-    columnsBySheet = {};
-    grades = {};
-    colIdCounter = 0;
     ensureStateShape();
+    return false;
   }
 }
 
-ensureStateShape();
+async function loadCloudState() {
+  try {
+    const response = await fetch(`${SHEETS_URL}?action=load`);
+    const result = await response.json();
+    if (!result || !result.ok || !result.data || typeof result.data !== 'object') return false;
+
+    let changed = false;
+    Object.keys(SHEETS).forEach(sheetName => {
+      if (!result.data[sheetName]) return;
+      const courseData = result.data[sheetName];
+      if (Array.isArray(courseData.columnas)) {
+        columnsBySheet[sheetName] = courseData.columnas.map(col => ({
+          id: Number(col.id),
+          name: col.name,
+          cat: col.cat,
+          weight: Number(col.weight) || 100
+        })).filter(col => col.id && col.name && col.cat);
+        columnsBySheet[sheetName].forEach(col => {
+          if (col.id > colIdCounter) colIdCounter = col.id;
+        });
+        changed = true;
+      }
+      if (courseData.notas && typeof courseData.notas === 'object') {
+        grades[sheetName] = courseData.notas;
+        changed = true;
+      }
+    });
+
+    ensureStateShape();
+    if (changed) saveState();
+    return changed;
+  } catch (err) {
+    console.error('No se pudieron cargar datos desde Google Sheets:', err);
+    return false;
+  }
+}
 
 // ─── TABS ───────────────────────────────────────────────────────────
 function renderTabs() {
@@ -663,7 +706,6 @@ function renderTable() {
 
 function renderThead(filtered) {
   const thead = document.getElementById('thead');
-  const sheetColumns = getColumnsForSheet();
 
   // Row 1: category spans
   const cats = ['cat1','cat2','cat3','cat4'];
@@ -672,7 +714,7 @@ function renderThead(filtered) {
     <th class="th-fixed-3 cat-final" rowspan="2" style="text-align:left;padding:0 10px">NOMBRES</th>`;
 
   cats.forEach(cat => {
-    const cols = sheetColumns.filter(c => c.cat === cat);
+    const cols = getColumnsForSheet().filter(c => c.cat === cat);
     const span = cols.length + 1; // +1 for add-col btn / subtotal
     const cfg = CAT_CONFIG[cat];
     catCells += `<th class="${cat}" colspan="${span}" style="text-align:center; padding:6px 8px;">
@@ -685,7 +727,7 @@ function renderThead(filtered) {
   // Row 2: individual col headers
   let colCells = '';
   cats.forEach(cat => {
-    const cols = sheetColumns.filter(c => c.cat === cat);
+    const cols = getColumnsForSheet().filter(c => c.cat === cat);
     cols.forEach(col => {
       colCells += `<th class="col-${cat}" style="min-width:72px; border:1px solid var(--border)">
         <div class="col-title-wrap" onclick="openEditColModal(${col.id})">
@@ -705,7 +747,6 @@ function renderTbody(filtered, allStudents) {
   const tbody = document.getElementById('tbody');
   const cats = ['cat1','cat2','cat3','cat4'];
   const sheetGrades = grades[currentSheet];
-  const sheetColumns = getColumnsForSheet();
 
   tbody.innerHTML = filtered.map(s => {
     const g = sheetGrades[s.idx] || {};
@@ -717,7 +758,7 @@ function renderTbody(filtered, allStudents) {
     const catWeightedSubs = {};
 
     cats.forEach(cat => {
-      const cols = sheetColumns.filter(c => c.cat === cat);
+      const cols = getColumnsForSheet().filter(c => c.cat === cat);
       let catNums = [];
 
       cols.forEach(col => {
@@ -780,14 +821,13 @@ function updateStats(students) {
 
   const sheetGrades = grades[currentSheet];
   const cats = ['cat1','cat2','cat3','cat4'];
-  const sheetColumns = getColumnsForSheet();
   let finals = [];
 
   students.forEach((s, idx) => {
     const g = sheetGrades[idx] || {};
     let catWeightedSubs = {};
     cats.forEach(cat => {
-      const cols = sheetColumns.filter(c => c.cat === cat);
+      const cols = getColumnsForSheet().filter(c => c.cat === cat);
       let catNums = cols.map(col => {
         const val = parseFloat(g[col.id]);
         return isNaN(val) ? null : { val, w: col.weight };
@@ -838,8 +878,8 @@ function setGrade(studentIdx, colId, value, input) {
     input.className = 'grade-input ' + gradeClass(clamped);
   }
   // Re-render and schedule sync
-  saveState();
   renderTable();
+  saveState();
   schedulSync();
 }
 
@@ -864,9 +904,9 @@ function addColumn() {
   document.getElementById('newColName').value = '';
   document.getElementById('newColWeight').value = 100;
   updateClaseCounter();
-  saveState();
   renderTable();
-  showToast(`✓ Actividad "${name}" agregada en ${currentSheet}`);
+  saveState();
+  showToast(`✓ Actividad "${name}" agregada`);
   schedulSync();
 }
 
@@ -888,8 +928,8 @@ function saveEditColumn() {
   col.cat = document.getElementById('editColCat').value;
   col.weight = parseFloat(document.getElementById('editColWeight').value) || 100;
   closeModal('editColModal');
-  saveState();
   renderTable();
+  saveState();
   showToast('✓ Actividad actualizada');
   schedulSync();
 }
@@ -898,12 +938,12 @@ function deleteColumn() {
   const colId = parseInt(document.getElementById('editColIdx').value);
   columnsBySheet[currentSheet] = getColumnsForSheet().filter(c => c.id !== colId);
   Object.keys(grades[currentSheet] || {}).forEach(idx => {
-    if (grades[currentSheet][idx]) delete grades[currentSheet][idx][colId];
+    delete grades[currentSheet][idx][colId];
   });
   closeModal('editColModal');
   updateClaseCounter();
-  saveState();
   renderTable();
+  saveState();
   showToast('🗑 Actividad eliminada');
   schedulSync();
 }
@@ -912,8 +952,8 @@ function deleteColumn() {
 function clearAllGrades() {
   if (!confirm(`¿Limpiar todas las notas del curso ${currentSheet}?`)) return;
   grades[currentSheet] = {};
-  saveState();
   renderTable();
+  saveState();
   showToast('🗑 Notas limpiadas');
   schedulSync();
 }
@@ -924,11 +964,10 @@ function exportCSV() {
   const students = SHEETS[currentSheet];
   const cats = ['cat1','cat2','cat3','cat4'];
   const sheetGrades = grades[currentSheet];
-  const sheetColumns = getColumnsForSheet();
 
   let header = ['#', 'APELLIDOS', 'NOMBRES'];
   cats.forEach(cat => {
-    sheetColumns.filter(c => c.cat === cat).forEach(col => header.push(`${col.name} (${CAT_CONFIG[cat].label})`));
+    getColumnsForSheet().filter(c => c.cat === cat).forEach(col => header.push(`${col.name} (${CAT_CONFIG[cat].label})`));
     header.push(`Subtotal ${CAT_CONFIG[cat].label}`);
   });
   header.push('NOTA FINAL');
@@ -939,7 +978,7 @@ function exportCSV() {
     let row = [idx+1, s.apellidos, s.nombres];
     let catWeightedSubs = {};
     cats.forEach(cat => {
-      const cols = sheetColumns.filter(c => c.cat === cat);
+      const cols = getColumnsForSheet().filter(c => c.cat === cat);
       let catNums = [];
       cols.forEach(col => {
         const val = g[col.id] !== undefined ? g[col.id] : '';
@@ -992,17 +1031,16 @@ function gradeLabel(val) {
 
 // ─── QUICK ADD CLASE ────────────────────────────────────────────────
 function quickAddClase() {
-  const sheetColumns = getColumnsForSheet();
-  const claseNums = sheetColumns
+  const claseNums = getColumnsForSheet()
     .filter(c => c.cat === 'cat1' && /^Clase \d+$/.test(c.name))
     .map(c => parseInt(c.name.replace('Clase ', '')));
   const next = claseNums.length > 0 ? Math.max(...claseNums) + 1 : 1;
   if (!columnsBySheet[currentSheet]) columnsBySheet[currentSheet] = [];
   columnsBySheet[currentSheet].push({ id: ++colIdCounter, name: `Clase ${next}`, cat: 'cat1', weight: 100 / (claseNums.length + 1) });
   updateClaseCounter();
-  saveState();
   renderTable();
-  showToast(`✓ Clase ${next} agregada en ${currentSheet}`);
+  saveState();
+  showToast(`✓ Clase ${next} agregada al 70%`);
   schedulSync();
   // Scroll table to right to show new column
   setTimeout(() => {
@@ -1083,12 +1121,11 @@ function buildSyncPayload(sheetName) {
   const students = SHEETS[sheetName];
   const cats = ['cat1','cat2','cat3','cat4'];
   const sheetGrades = grades[sheetName] || {};
-  const sheetColumns = getColumnsForSheet(sheetName);
 
   // Build header: col names per category
   const colHeaders = [];
   cats.forEach(cat => {
-    sheetColumns.filter(c => c.cat === cat).forEach(col => {
+    getColumnsForSheet(sheetName).filter(c => c.cat === cat).forEach(col => {
       colHeaders.push(`${col.name} (${CAT_CONFIG[cat].label})`);
     });
     colHeaders.push(`Subtotal ${CAT_CONFIG[cat].label} (${Math.round(CAT_CONFIG[cat].weight*100)}%)`);
@@ -1100,7 +1137,7 @@ function buildSyncPayload(sheetName) {
     const catSubs = {};
 
     cats.forEach(cat => {
-      const cols = sheetColumns.filter(c => c.cat === cat);
+      const cols = getColumnsForSheet().filter(c => c.cat === cat);
       const catNums = [];
       cols.forEach(col => {
         const val = g[col.id] !== undefined ? g[col.id] : '';
@@ -1148,7 +1185,9 @@ async function syncToSheets() {
         body: JSON.stringify(payload)
       });
       const result = await response.json();
-      if (!result.ok) throw new Error(result.error || 'Error al guardar');
+      if (!result.ok) {
+        throw new Error(result.error || 'Error al guardar en Google Sheets');
+      }
     }
     setSyncStatus('ok');
     syncPending = false;
@@ -1159,53 +1198,18 @@ async function syncToSheets() {
   }
 }
 
-async function loadCloudState() {
-  try {
-    const response = await fetch(`${SHEETS_URL}?action=load`);
-    const result = await response.json();
-    if (!result.ok || !result.data) return false;
-
-    const data = result.data;
-    let maxId = colIdCounter;
-
-    Object.keys(data).forEach(sheetName => {
-      if (!SHEETS[sheetName]) return;
-      const courseData = data[sheetName] || {};
-      if (Array.isArray(courseData.columnas)) {
-        columnsBySheet[sheetName] = courseData.columnas.map(col => ({
-          id: Number(col.id) || 0,
-          name: col.name || 'Actividad',
-          cat: col.cat || 'cat1',
-          weight: Number(col.weight) || 100
-        }));
-        columnsBySheet[sheetName].forEach(col => { if (col.id > maxId) maxId = col.id; });
-      }
-      if (courseData.notas && typeof courseData.notas === 'object') {
-        grades[sheetName] = courseData.notas;
-      }
-    });
-
-    colIdCounter = maxId;
-    ensureStateShape();
-    saveState();
-    return true;
-  } catch (err) {
-    console.error('Load cloud error:', err);
-    return false;
-  }
-}
-
 // ─── INIT ────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-  loadState();
+  loadLocalState();
   updateClaseCounter();
   renderTabs();
   renderTable();
-  const loadedFromCloud = await loadCloudState();
-  if (loadedFromCloud) {
+  const loaded = await loadCloudState();
+  if (loaded) {
     updateClaseCounter();
     renderTabs();
     renderTable();
+    setSyncStatus('ok');
   }
 });
 </script>
