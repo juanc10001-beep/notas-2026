@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Notas 2026</title>
+<style>
+  :root {
+    --primary: #1a3a6b;
+    --primary-light: #2756a8;
+    --accent: #e8a020;
+    --bg: #f0f4fa;
+    --white: #ffffff;
+    --border: #c8d6ea;
+    --text: #1a2340;
+    --text-muted: #6b7a99;
+    --bajo: #c0392b;
+    --basico: #e67e22;
+    --alto: #2471a3;
+    --superior: #1a7a4a;
+    --danger: #c0392b;
+    --success: #1a7a4a;
+    --warn: #e67e22;
+    --cat1: #1a5fa8;   /* 70% trabajos */
+    --cat2: #7b2d8b;   /* 20% eval trimestral */
+    --cat3: #1a7a4a;   /* 5% coevaluación */
+    --cat4: #b5600a;   /* 5% autoevaluación */
+    --cat1-light: #dbeafe;
+    --cat2-light: #f3e8fc;
+    --cat3-light: #d1fae5;
+    --cat4-light: #fef3c7;
+    --row-even: #f7f9fd;
+    --row-hover: #e8f0fb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: var(--primary);
+    color: white;
+    padding: 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    padding: 14px 24px;
+    gap: 16px;
+  }
+
+  .header-top .logo {
+    font-size: 28px;
+  }
+
+  .header-top h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .header-top .subtitle {
+    font-size: 0.82rem;
+    opacity: 0.75;
+    margin-top: 2px;
+  }
+
+  /* ─── TAB BAR ─── */
+  .tab-bar {
+    display: flex;
+    overflow-x: auto;
+    background: rgba(0,0,0,0.18);
+    padding: 0 16px;
+    gap: 4px;
+  }
+
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.72);
+    padding: 10px 18px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.18s;
+    letter-spacing: 0.3px;
+  }
+
+  .tab-btn:hover { color: white; background: rgba(255,255,255,0.08); }
+  .tab-btn.active {
+    color: white;
+    border-bottom-color: var(--accent);
+    background: rgba(255,255,255,0.12);
+  }
+
+  /* ─── TOOLBAR ─── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 20px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+
+  .toolbar-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-light); }
+  .btn-accent { background: var(--accent); color: white; }
+  .btn-accent:hover { background: #c8880e; }
+  .btn-ghost {
+    background: white;
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn-danger { background: #fde8e8; color: var(--danger); border: 1.5px solid #f5b8b8; }
+  .btn-danger:hover { background: #fbc9c9; }
+
+  input[type="text"], select {
+    padding: 7px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-size: 0.82rem;
+    outline: none;
+    transition: border 0.18s;
+  }
+  input[type="text"]:focus, select:focus { border-color: var(--primary-light); }
+
+  /* ─── LEGEND ─── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 20px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.77rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ─── TABLE CONTAINER ─── */
+  .table-wrap {
+    overflow: auto;
+    max-height: calc(100vh - 210px);
+    padding: 0;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: max-content;
+    min-width: 100%;
+    font-size: 0.82rem;
+  }
+
+  /* Header rows */
+  thead tr.cat-header th {
+    padding: 6px 8px;
+    font-size: 0.73rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.25);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  thead tr.col-header th {
+    padding: 6px 10px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-align: center;
+    border: 1px solid var(--border);
+    position: sticky;
+    top: 32px;
+    z-index: 10;
+    white-space: nowrap;
+  }
+
+  .th-fixed-1 { position: sticky; left: 0; z-index: 20 !important; min-width: 36px; text-align: center; }
+  .th-fixed-2 { position: sticky; left: 36px; z-index: 20 !important; min-width: 190px; }
+  .th-fixed-3 { position: sticky; left: 226px; z-index: 20 !important; min-width: 155px; }
+
+  /* Cat colors */
+  .cat1 { background: var(--cat1); color: white; }
+  .cat2 { background: var(--cat2); color: white; }
+  .cat3 { background: var(--cat3); color: white; }
+  .cat4 { background: var(--cat4); color: white; }
+  .cat-final { background: #2c2c2c; color: white; }
+
+  .col-cat1 { background: var(--cat1-light); }
+  .col-cat2 { background: var(--cat2-light); }
+  .col-cat3 { background: var(--cat3-light); }
+  .col-cat4 { background: var(--cat4-light); }
+  .col-final { background: #f0f0f0; }
+
+  /* Body rows */
+  tbody tr:nth-child(even) td { background: var(--row-even); }
+  tbody tr:hover td { background: var(--row-hover) !important; }
+
+  tbody td {
+    padding: 0;
+    border: 1px solid var(--border);
+    vertical-align: middle;
+    height: 36px;
+  }
+
+  .td-num { text-align: center; color: var(--text-muted); font-size: 0.78rem; padding: 0 4px; }
+
+  .td-name {
+    padding: 0 10px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .td-sticky-1 { position: sticky; left: 0; z-index: 5; background: inherit; }
+  .td-sticky-2 { position: sticky; left: 36px; z-index: 5; background: inherit; }
+  .td-sticky-3 { position: sticky; left: 226px; z-index: 5; background: inherit; }
+
+  /* Grade inputs */
+  .grade-input {
+    width: 100%;
+    height: 36px;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    color: var(--text);
+    padding: 0 4px;
+  }
+
+  .grade-input:focus {
+    background: white;
+    box-shadow: inset 0 0 0 2px var(--primary-light);
+    border-radius: 4px;
+  }
+
+  .grade-bajo     { color: var(--bajo) !important; }
+  .grade-basico   { color: var(--basico) !important; }
+  .grade-alto     { color: var(--alto) !important; }
+  .grade-superior { color: var(--superior) !important; }
+  /* legacy aliases */
+  .grade-low  { color: var(--bajo) !important; }
+  .grade-mid  { color: var(--basico) !important; }
+  .grade-high { color: var(--superior) !important; }
+
+  /* Final grade cell */
+  .final-cell {
+    font-weight: 700;
+    text-align: center;
+    padding: 0 10px;
+    font-size: 0.88rem;
+  }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    width: 480px;
+    max-width: 95vw;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+    animation: popIn 0.2s ease;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.94); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .modal h2 { font-size: 1.1rem; margin-bottom: 18px; color: var(--primary); }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.88rem;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--primary);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: all 0.25s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 8px 20px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+  }
+
+  .stat-item { display: flex; gap: 5px; align-items: center; }
+  .stat-label { color: var(--text-muted); font-weight: 500; }
+  .stat-value { font-weight: 700; color: var(--text); }
+
+  /* col editor badge */
+  .col-title-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    min-width: 64px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .col-title-wrap:hover { background: rgba(0,0,0,0.08); }
+  .col-title-wrap .col-name { font-size: 0.73rem; font-weight: 700; }
+  .col-title-wrap .col-pct { font-size: 0.68rem; opacity: 0.75; }
+
+  .add-col-btn {
+    background: rgba(255,255,255,0.18);
+    border: 2px dashed rgba(255,255,255,0.5);
+    color: white;
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-weight: 600;
+  }
+  .add-col-btn:hover { background: rgba(255,255,255,0.28); }
+
+  .del-col-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px; height: 14px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 10px;
+    cursor: pointer;
+    margin-top: 1px;
+    transition: background 0.15s;
+    line-height: 1;
+  }
+  .del-col-btn:hover { background: rgba(255,80,80,0.6); }
+
+  .del-student-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: #ccc;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1;
+    padding: 0;
+  }
+  .del-student-btn:hover { background: #fde8e8; color: var(--danger); }
+  tbody tr:hover .del-student-btn { color: #aaa; }
+
+  @media (max-width: 600px) {
+    .header-top h1 { font-size: 1rem; }
+    .tab-btn { padding: 8px 12px; font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <span class="logo">📚</span>
+    <div>
+      <h1>Registro de Notas 2026</h1>
+      <div class="subtitle">Sistema de evaluación por competencias</div>
+    </div>
+  </div>
+  <div class="tab-bar" id="tabBar"></div>
+</header>
+
+<div id="app">
+  <div class="toolbar">
+    <span class="toolbar-label">Acciones:</span>
+    <button class="btn btn-primary" style="background:var(--cat1)" onclick="quickAddClase()">＋ Clase rápida</button>
+    <button class="btn btn-primary" onclick="openAddColModal()">＋ Actividad personalizada</button>
+    <span id="claseCounter" style="font-size:0.78rem; color:var(--cat1); font-weight:700; background:var(--cat1-light); padding:4px 10px; border-radius:20px; border:1.5px solid #bfdbfe;"></span>
+    <div style="width:1px; height:24px; background:var(--border); margin:0 2px;"></div>
+    <button class="btn btn-ghost" onclick="clearAllGrades()">🗑 Limpiar Notas</button>
+    <button class="btn btn-accent" onclick="exportCSV()">⬇ Exportar CSV</button>
+    <button class="btn btn-primary" style="background:var(--success)" onclick="openAddStudentModal()">👤＋ Agregar Estudiante</button>
+    <span style="margin-left:auto; display:flex; align-items:center; gap:8px;">
+      <span class="toolbar-label">Buscar:</span>
+      <input type="text" id="searchInput" placeholder="Buscar estudiante..." style="width:190px" oninput="filterStudents()">
+    </span>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cat1)"></div>Heteroevaluación (50%)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cat2)"></div>Eval. Trimestral (20%)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cat3)"></div>Coevaluación (15%)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cat4)"></div>Autoevaluación (15%)</div>
+    <div class="legend-item" style="margin-left:auto">
+      <span style="color:var(--bajo);     font-size:0.75rem; font-weight:700;">● 1.0–2.9 Bajo</span>
+      <span style="color:var(--basico);   font-size:0.75rem; font-weight:700; margin-left:8px;">● 3.0–3.9 Básico</span>
+      <span style="color:var(--alto);     font-size:0.75rem; font-weight:700; margin-left:8px;">● 4.0–4.5 Alto</span>
+      <span style="color:var(--superior); font-size:0.75rem; font-weight:700; margin-left:8px;">● 4.6–5.0 Superior</span>
+    </div>
+  </div>
+
+  <div id="syncBar" style="display:flex; align-items:center; gap:10px; padding:6px 20px; background:#f0fdf4; border-bottom:1px solid #bbf7d0; font-size:0.78rem; font-weight:600; color:#166534; transition:background 0.3s;">
+    <span id="syncIcon">☁️</span>
+    <span id="syncMsg">Conectado a Google Sheets — los cambios se guardan automáticamente</span>
+    <span id="syncSpinner" style="display:none; margin-left:4px;">⏳</span>
+  </div>
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item"><span class="stat-label">Curso:</span><span class="stat-value" id="statCourse">—</span></div>
+    <div class="stat-item"><span class="stat-label">Estudiantes:</span><span class="stat-value" id="statCount">—</span></div>
+    <div class="stat-item"><span class="stat-label">Promedio general:</span><span class="stat-value" id="statAvg">—</span></div>
+    <div class="stat-item"><span class="stat-label">Aprobados:</span><span class="stat-value" id="statPass">—</span></div>
+    <div class="stat-item"><span class="stat-label">En riesgo (&lt;3.0):</span><span class="stat-value" id="statFail" style="color:var(--danger)">—</span></div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="gradeTable">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Agregar Actividad -->
+<div class="modal-overlay" id="addColModal">
+  <div class="modal">
+    <h2>➕ Nueva Actividad / Columna</h2>
+    <div class="form-group">
+      <label>Nombre de la actividad</label>
+      <input type="text" id="newColName" placeholder="Ej: Taller 1, Quiz 2..." maxlength="30">
+    </div>
+    <div class="form-group">
+      <label>Categoría</label>
+      <select id="newColCat">
+        <option value="cat1">Heteroevaluación (50%)</option>
+        <option value="cat2">Evaluación Trimestral (20%)</option>
+        <option value="cat3">Coevaluación (15%)</option>
+        <option value="cat4">Autoevaluación (15%)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Porcentaje dentro de la categoría (%)</label>
+      <input type="number" id="newColWeight" min="1" max="100" value="100" style="width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:0.88rem;">
+      <div style="font-size:0.73rem; color:var(--text-muted); margin-top:4px;">Peso relativo dentro de la categoría (ej: si hay 2 trabajos iguales, cada uno pesa 50%)</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('addColModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="addColumn()">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Agregar Estudiante -->
+<div class="modal-overlay" id="addStudentModal">
+  <div class="modal">
+    <h2>👤 Agregar Nuevo Estudiante</h2>
+    <div class="form-group">
+      <label>Apellidos</label>
+      <input type="text" id="newStudentApellidos" placeholder="Ej: GARCIA LOPEZ" maxlength="60" style="text-transform:uppercase">
+    </div>
+    <div class="form-group">
+      <label>Nombres</label>
+      <input type="text" id="newStudentNombres" placeholder="Ej: JUAN DAVID" maxlength="60" style="text-transform:uppercase">
+    </div>
+    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:-6px; margin-bottom:10px;">
+      ℹ️ El estudiante se agrega al curso activo: <strong id="addStudentCurso"></strong>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('addStudentModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="addStudent()">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Editar columna -->
+<div class="modal-overlay" id="editColModal">
+  <div class="modal">
+    <h2>✏️ Editar Actividad</h2>
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" id="editColName" maxlength="30">
+    </div>
+    <div class="form-group">
+      <label>Categoría</label>
+      <select id="editColCat">
+        <option value="cat1">Heteroevaluación (50%)</option>
+        <option value="cat2">Evaluación Trimestral (20%)</option>
+        <option value="cat3">Coevaluación (15%)</option>
+        <option value="cat4">Autoevaluación (15%)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Porcentaje dentro de la categoría (%)</label>
+      <input type="number" id="editColWeight" min="1" max="100" style="width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:0.88rem;">
+    </div>
+    <input type="hidden" id="editColIdx">
+    <div class="modal-actions">
+      <button class="btn btn-danger" onclick="deleteColumn()">Eliminar</button>
+      <button class="btn btn-ghost" onclick="closeModal('editColModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditColumn()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────
+const SHEETS = {"702 - ING": [{"apellidos": "ANRANGO MALDONADO", "nombres": "YAID JOSUE"}, {"apellidos": "BELEÑO RIVEROS", "nombres": "LEDYS VALENTINA"}, {"apellidos": "CASTILLO DUQUE", "nombres": "DIEGO ALEJANDRO"}, {"apellidos": "DIAZ TOVAR", "nombres": "NATHALY SOFIA"}, {"apellidos": "GARCIA BELEÑO", "nombres": "JUAN SEBASTIAN"}, {"apellidos": "GARCIA PEREZ", "nombres": "JONATHAN DELIMIRO"}, {"apellidos": "GONZALEZ COHEN", "nombres": "YORKIS EDUARDO"}, {"apellidos": "GUEVARA AVILES", "nombres": "NICOLAS ALEJANDRO"}, {"apellidos": "GUTIERREZ MONTENEGRO", "nombres": "NEIMAR JOSE"}, {"apellidos": "HENAO CUERVO", "nombres": "ANA SOFIA"}, {"apellidos": "HERRERA CABALLERO", "nombres": "EMANUEL"}, {"apellidos": "LOZANO PERALTA", "nombres": "SIMON DAVID"}, {"apellidos": "MENA CUESTA", "nombres": "EMELY VALENTINA"}, {"apellidos": "MENDOZA BERNAL", "nombres": "SAMUEL"}, {"apellidos": "MORALES CASALLAS", "nombres": "EMMANUEL ANGEL"}, {"apellidos": "MORENO REYES", "nombres": "KIMBERLY NICOL"}, {"apellidos": "MUÑOZ PULGARIN", "nombres": "ANA MARIA"}, {"apellidos": "NEUTA OSORIO", "nombres": "MARIA ISABELLA"}, {"apellidos": "OJEDA MEDINA", "nombres": "SARA VALENTINA"}, {"apellidos": "ORTEGON SEGURA", "nombres": "SEBASTIAN DAVID"}, {"apellidos": "PARRA BUITRAGO", "nombres": "DANNA SOFIA"}, {"apellidos": "PEREZ PEREZ", "nombres": "MARTIN"}, {"apellidos": "RODRIGUEZ TERAN", "nombres": "LIZETH CAROLINA"}, {"apellidos": "ROMERO ESCALANTE", "nombres": "XAMDER DAVID"}, {"apellidos": "RUIZ FLOREZ", "nombres": "EDUARD MATIAS"}, {"apellidos": "RUIZ RESTREPO", "nombres": "JULIETA"}, {"apellidos": "TIMAURE MELENDEZ", "nombres": "SEBASTIAN ALEXANDER"}, {"apellidos": "TORREBLANCA TOBIAS", "nombres": "GREYDIS LORENA"}, {"apellidos": "TORRES GARZON", "nombres": "VALERY SOFIA"}, {"apellidos": "VILLALBA MARTINEZ", "nombres": "DIEGO"}, {"apellidos": "VILLAMIL LEAL", "nombres": "JAVID MATIAS"}], "801 - ING": [{"apellidos": "ACERO FALLA", "nombres": "ISABELA"}, {"apellidos": "ACUÑA VERDUGO", "nombres": "NICOLLE DANIELA"}, {"apellidos": "BAUTISTA LOPEZ", "nombres": "JUAN ESTEBAN"}, {"apellidos": "BECERRA MERCHAN", "nombres": "MATTIAS"}, {"apellidos": "BELTRAN VARGAS", "nombres": "PAULA VALENTINA"}, {"apellidos": "BELTRAN VILLALBA", "nombres": "SAMUEL ENRIQUE"}, {"apellidos": "CARO GARCÍA", "nombres": "LUCÍA"}, {"apellidos": "CASTAÑO LOPEZ", "nombres": "JUAN CAMILO"}, {"apellidos": "CASTRO SANGUINO", "nombres": "ASHLY DAYANA"}, {"apellidos": "CORREA FONSECA", "nombres": "DIEGO ANDRES"}, {"apellidos": "DAVILA MARTINEZ", "nombres": "JOAN EMMANUEL"}, {"apellidos": "DE FRENZA PEINADO", "nombres": "NATHALIA ANTONELLA"}, {"apellidos": "DUGARTE UZCATEGUI", "nombres": "FABIAN ANDRES"}, {"apellidos": "FRESNEDA HERRERA", "nombres": "LAURA XIMENA"}, {"apellidos": "GALINDO BARON", "nombres": "CARLA MARIANA"}, {"apellidos": "GALVIS GUTIERREZ", "nombres": "DAVID SANTIAGO"}, {"apellidos": "GARCIA SANCHEZ", "nombres": "DANA SOFIA"}, {"apellidos": "GIRALDO MURCIA", "nombres": "CARLA GISEL"}, {"apellidos": "GONZALEZ GUERRERO", "nombres": "ISABELA"}, {"apellidos": "GONZALEZ LOPEZ", "nombres": "YULI XIMENA"}, {"apellidos": "JIMENES LAGUADO", "nombres": "MARÍA JOSÉ"}, {"apellidos": "LLANOS HUERTAS", "nombres": "SARA ISABELLA"}, {"apellidos": "MARINEZ MAYORGA", "nombres": "VALERY DAYAN"}, {"apellidos": "MENDIETA MEJIA", "nombres": "JUAN ANGEL"}, {"apellidos": "MORENO LARA", "nombres": "NICOLAS"}, {"apellidos": "MORENO SILVA", "nombres": "LAURA MICHELLE"}, {"apellidos": "OJEDA HERRERA", "nombres": "MAURA ALEJANDRA"}, {"apellidos": "PARRA VILLADA", "nombres": "SARITHA"}, {"apellidos": "PINEDA OCHOA", "nombres": "NICOLAS ADAN"}, {"apellidos": "REVERON RIVEROS", "nombres": "CAMILA VALERIA"}, {"apellidos": "RIASCOS CAICEDO", "nombres": "CESAR ADRIAN"}, {"apellidos": "RODRIGUEZ MANRIQUE", "nombres": "DAVID ESTEBAN"}, {"apellidos": "SANCHEZ FERNANDEZ", "nombres": "MIGUEL ANGEL"}, {"apellidos": "TRIVIÑO GUALTEROS", "nombres": "JULIAN DAVID"}], "802 - ING": [{"apellidos": "ACOSTA AGUIAR", "nombres": "MIGUEL EDUARDO"}, {"apellidos": "ARIAS LEON", "nombres": "JONATHAN GABRIEL"}, {"apellidos": "ARRIETA VERGARA", "nombres": "ANNY SOFIA"}, {"apellidos": "BELEÑO BETANCOURTH", "nombres": "ARIADNA ALEJANDRA"}, {"apellidos": "BUITRAGO ANGEL", "nombres": "MARIA JOSE"}, {"apellidos": "CABEZAS MARTINEZ", "nombres": "SOLL MARIX"}, {"apellidos": "CARRASCAL DE LA TORRE", "nombres": "JADER STIVEN"}, {"apellidos": "CASTRO LASTRA", "nombres": "AURA SOFIA"}, {"apellidos": "COLORADO OLMOS", "nombres": "NICOLE VALERIA"}, {"apellidos": "CORTES RINCON", "nombres": "OSWEILYN ESTHER"}, {"apellidos": "CORTES ROCHA", "nombres": "JUAN FELIPE"}, {"apellidos": "FERNANDEZ BUENDIA", "nombres": "SEBASTIAN JOSE"}, {"apellidos": "FORERO CARRERO", "nombres": "DANNA VALENTINA"}, {"apellidos": "GARCIA AVELLANEDA", "nombres": "SAMUEL JOSE"}, {"apellidos": "GARCIA MORANTES", "nombres": "LUIS SEBASTIAN"}, {"apellidos": "HEREDIA RUIZ", "nombres": "MARIA CAMILA"}, {"apellidos": "HERNANDEZ PEREZ", "nombres": "CAMILA YIREH"}, {"apellidos": "LAVERDE ALONSO", "nombres": "JOEL"}, {"apellidos": "MENDEZ CALDERON", "nombres": "SAMUEL"}, {"apellidos": "MORENO BECERRA", "nombres": "IVAN DARIO"}, {"apellidos": "MUÑOZ MONTES", "nombres": "ISABELLA"}, {"apellidos": "MURIEL GAMEZ", "nombres": "JORDAN DAVID"}, {"apellidos": "NAVARRETE NIÑO", "nombres": "NICOL TATIANA"}, {"apellidos": "OLAYA PEREZ", "nombres": "MELANY GABRIELA"}, {"apellidos": "ORDONEZ CIFUENTES", "nombres": "JUAN ANGEL"}, {"apellidos": "ORTEGA CHAVARRA", "nombres": "SOFIA"}, {"apellidos": "PEDRAZA GONZALEZ", "nombres": "JUAN JOSE"}, {"apellidos": "PRIETO POVEDA", "nombres": "DAVID FELIPE"}, {"apellidos": "PUERTO ORTIZ", "nombres": "GABRIELA"}, {"apellidos": "PULIDO FLOREZ", "nombres": "MARIA ISABELLA"}, {"apellidos": "REBOLLEDO BUSTAMANTE", "nombres": "ISABELLA SOFIA"}, {"apellidos": "ROA ORMAZA", "nombres": "SAMUEL HUMBERTO"}, {"apellidos": "ROJAS RICAURTE", "nombres": "DIEGO ISAAC"}, {"apellidos": "ZAMBRANO PORTELA", "nombres": "ANAMARIA"}], "703 - CAS": [{"apellidos": "ALVARADO NOVOA", "nombres": "KRISTEN VALERIA"}, {"apellidos": "BERMUDEZ LARA", "nombres": "LUIS ALBERTO"}, {"apellidos": "BONILLA REYES", "nombres": "NATALIA"}, {"apellidos": "CARDOZO OLARTE", "nombres": "ANDRES FELIPE"}, {"apellidos": "CERQUERA PRIETO", "nombres": "EDWARD SAMUEL"}, {"apellidos": "DE FRENZA PEINADO", "nombres": "FRANCO ALESSANDRO"}, {"apellidos": "DE LA HOZ HERNANDEZ", "nombres": "NICOLLE DAYANA"}, {"apellidos": "DUEÑAS GIL", "nombres": "MARTIN"}, {"apellidos": "DURAN VALENCIA", "nombres": "LAUREN VALENTINA"}, {"apellidos": "ESPEJO DIAZ", "nombres": "ANDERSON ESNEIDER"}, {"apellidos": "ESTRADA RINCON", "nombres": "ISABELLA CRISTINA"}, {"apellidos": "GOMEZ SUAREZ", "nombres": "JOHAN SAMUEL"}, {"apellidos": "GUZMAN ALFONSO", "nombres": "ANGEL ALBERTO"}, {"apellidos": "HERNANDEZ ALVAREZ", "nombres": "MIGUEL ANGEL"}, {"apellidos": "MARTINEZ CASTRO", "nombres": "AINHOA MIRANDA"}, {"apellidos": "MEDINA TURMEQUE", "nombres": "ANGEL SOFIA"}, {"apellidos": "MENDEZ FARFAN", "nombres": "JUAN FELIPE"}, {"apellidos": "NAVAS DIAZ", "nombres": "SALOME"}, {"apellidos": "PARRA LEAL", "nombres": "GISSELLE GABRIELA"}, {"apellidos": "PEREZ PINEDA", "nombres": "NICOLAS"}, {"apellidos": "PINILLA ALZATE", "nombres": "ANGEL SANTIAGO"}, {"apellidos": "PULIDO FLOREZ", "nombres": "MARIANA"}, {"apellidos": "RAMIREZ RODRIGUEZ", "nombres": "CAMILA SARAHI"}, {"apellidos": "REBOLLEDO BUSTAMANTE", "nombres": "ISAAC JOSE"}, {"apellidos": "RESTREPO CARDENAS", "nombres": "FABIAN ESTEBAN"}, {"apellidos": "RODRIGUEZ YARA", "nombres": "MARIA JOSE"}, {"apellidos": "SANCHEZ HERNANDEZ", "nombres": "HELEN ISABELLA"}, {"apellidos": "SUAREZ TIQUE", "nombres": "MICHAEL STEVEN"}, {"apellidos": "TIMAURE MELENDEZ", "nombres": "SEBASTIAN ALEXANDER"}, {"apellidos": "TORO GALLO", "nombres": "SAMUEL FELIPE"}, {"apellidos": "VINASCO ANACONA", "nombres": "SARAY YULIANA"}, {"apellidos": "VINASCO ANACONA", "nombres": "LIYEN BRISNEY"}], "803 - CAS": [{"apellidos": "AMADO FRESNEDA", "nombres": "SERGIO NICOLAS"}, {"apellidos": "APARICIO CHICACAUSA", "nombres": "EIMY"}, {"apellidos": "BANGURA DUNDUMI", "nombres": "NICOL DAHIANA"}, {"apellidos": "BETANCOURT RODRIGUEZ", "nombres": "ZARETH SOFIA"}, {"apellidos": "BUITRAGO LOPEZ", "nombres": "ESTEBAN"}, {"apellidos": "CEBALLOS RENGIFO", "nombres": "TAYRONA"}, {"apellidos": "CORTES TARAZONA", "nombres": "JOSE DAVID"}, {"apellidos": "ESQUIVEL PUENTES", "nombres": "LIANNE ANTONIA"}, {"apellidos": "FERNANDEZ RAMIREZ", "nombres": "ANDRES MAURICIO"}, {"apellidos": "GONZALEZ GUERRERO", "nombres": "ISABELLA"}, {"apellidos": "GONZALEZ LOPEZ", "nombres": "SARA"}, {"apellidos": "GUERRERO MUÑOZ", "nombres": "MARIA ESTEFANIA"}, {"apellidos": "GUTIERREZ BLANCO", "nombres": "LUCIANA CAMILA"}, {"apellidos": "HERNANDEZ MURCIA", "nombres": "VALERIE SOFIA"}, {"apellidos": "HERRERA PEÑUELA", "nombres": "EVELING SOFIA"}, {"apellidos": "LESMES ROMERO", "nombres": "JUAN CAMILO"}, {"apellidos": "LOPEZ GOMEZ", "nombres": "ANDRUW JHOSUA"}, {"apellidos": "LOZANO MEDINA", "nombres": "JUAN ESTEBAN"}, {"apellidos": "MARQUEZ OVIEDO", "nombres": "SAMUEL ANDRES"}, {"apellidos": "MENDEZ ARIZA", "nombres": "ARTURO ENRIQUE"}, {"apellidos": "MONTEALEGRE CALVO", "nombres": "SAMUEL ALBERTO"}, {"apellidos": "MORENO ARIZA", "nombres": "DANIEL ESTEBAN"}, {"apellidos": "MORENO BENAVIDES", "nombres": "CRISTIAN FELIPE"}, {"apellidos": "MUÑOZ TORRES", "nombres": "DANIEL FELIPE"}, {"apellidos": "NUMPAQUE SOTELO", "nombres": "ISABELLA"}, {"apellidos": "PINEDO SERPA", "nombres": "LINA MARCELA"}, {"apellidos": "PINILLA MOLINA", "nombres": "JUDY ALEXANDRA"}, {"apellidos": "PLAZA IBAÑEZ", "nombres": "MARTIN ALEJANDRO"}, {"apellidos": "PULIDO GOMEZ", "nombres": "DANIELA"}, {"apellidos": "REALES CERDA", "nombres": "DAYIMAR DANIELA"}, {"apellidos": "RIOS GALINDO", "nombres": "ANIBAL EMMANUEL"}, {"apellidos": "RODRIGUEZ CASTRO", "nombres": "ANYELY FERNANDA"}, {"apellidos": "RODRIGUEZ HERRERA", "nombres": "JULIANA"}, {"apellidos": "RODRIGUEZ TORRES", "nombres": "DAVID ESTIVEN"}, {"apellidos": "ROMERO ALVAREZ", "nombres": "ANDERSSON"}, {"apellidos": "ROMERO IBARRA", "nombres": "SAMUEL SALAH"}, {"apellidos": "RONDANO TOVAR", "nombres": "SALOME"}, {"apellidos": "SANTAMARIA TORRES", "nombres": "ANDRES SANTIAGO"}, {"apellidos": "TRUJILLO CALDERON", "nombres": "JUAN SEBASTIAN"}], "1003 - CAS": [{"apellidos": "ACOSTA PATERNINA", "nombres": "ISABELLA"}, {"apellidos": "BECERRA MAYO", "nombres": "JERONIMO"}, {"apellidos": "BONILLA GALINDA", "nombres": "BRIAN ALEJANDRO"}, {"apellidos": "CAMACHO OSPINA", "nombres": "MICHAEL ALEXANDER"}, {"apellidos": "CASTRO LADINO", "nombres": "DAVID ROBERTO"}, {"apellidos": "CHAUTA GUARIN", "nombres": "JOEL SEBASTIAN"}, {"apellidos": "COBOS GUEVARA", "nombres": "MANUELA"}, {"apellidos": "CORBA PULIDO", "nombres": "MIGUEL ANGEL"}, {"apellidos": "DUN VERGARA", "nombres": "ORLEIBIS GEORGINA"}, {"apellidos": "GARAY VILLALBA", "nombres": "ANDRES FELIPE"}, {"apellidos": "GARZON ORTIZ", "nombres": "LEIDY DANIELA"}, {"apellidos": "HERNANDEZ CADENA", "nombres": "WILSON DANIEL"}, {"apellidos": "LEON CASTRO", "nombres": "JUAN CAMILO"}, {"apellidos": "LONGA ROJAS", "nombres": "MARIA JOSE"}, {"apellidos": "LOPEZ RODRIGUEZ", "nombres": "KAROL YINETH"}, {"apellidos": "MAHECHA BELLO", "nombres": "VALERY"}, {"apellidos": "MALAGON RICO", "nombres": "SOPHIA"}, {"apellidos": "MARQUEZ VILLEGAS", "nombres": "SNEYKER VLADIMIR"}, {"apellidos": "MENDEZ MORENA", "nombres": "HANNAH VALERIA"}, {"apellidos": "MIRANDA VELOSA", "nombres": "JUAN ESTEBAN"}, {"apellidos": "MONTAÑO CASTRO", "nombres": "ALEJANDRO"}, {"apellidos": "MORENO BECERRA", "nombres": "MARIA ALEJANDRA"}, {"apellidos": "PICHAMBA CANDO", "nombres": "JOSEP JOEL"}, {"apellidos": "PINZON PALOMA", "nombres": "LAURA JULIANA"}, {"apellidos": "RIVERA RAMIREZ", "nombres": "ANGEL DAVID"}, {"apellidos": "ROSERO GUEVARA", "nombres": "BRITTANY SOFIA"}, {"apellidos": "SALAZAR OLAYA", "nombres": "ISABELA"}, {"apellidos": "SOACHA RINCON", "nombres": "GABRIEL ALEJANDRO"}, {"apellidos": "SOTO GUZMAN", "nombres": "SHARON GABRIELA"}, {"apellidos": "TIMAURE MELENDEZ", "nombres": "AARON ALEXANDER"}, {"apellidos": "TORRES CABRALES", "nombres": "NICOLE SOFIA"}, {"apellidos": "VARGAS AYURE", "nombres": "JULIAN SANTIAGO"}, {"apellidos": "VELASQUEZ PESTANA", "nombres": "LUIS MANUEL"}]};
+
+const CAT_CONFIG = {
+  cat1: { label: 'Heteroevaluación',  weight: 0.50, cls: 'cat1' },
+  cat2: { label: 'Eval. Trimestral', weight: 0.20, cls: 'cat2' },
+  cat3: { label: 'Coevaluación',     weight: 0.15, cls: 'cat3' },
+  cat4: { label: 'Autoevaluación',   weight: 0.15, cls: 'cat4' },
+};
+
+// State
+let currentSheet = Object.keys(SHEETS)[0];
+let columns = {};      // columns[sheetName] = [ {id, name, cat, weight} ]
+let grades = {};       // grades[sheetName][studentIdx][colId] = value
+let colIdCounters = {}; // colIdCounters[sheetName] = number
+
+// Init per-sheet storage
+Object.keys(SHEETS).forEach(s => {
+  columns[s] = [];
+  grades[s] = {};
+  colIdCounters[s] = 0;
+});
+
+// ─── TABS ───────────────────────────────────────────────────────────
+function renderTabs() {
+  const bar = document.getElementById('tabBar');
+  bar.innerHTML = Object.keys(SHEETS).map(name =>
+    `<button class="tab-btn ${name === currentSheet ? 'active' : ''}" onclick="switchTab('${name}')">${name}</button>`
+  ).join('');
+}
+
+function switchTab(name) {
+  currentSheet = name;
+  renderTabs();
+  renderTable();
+}
+
+// ─── TABLE ──────────────────────────────────────────────────────────
+function renderTable() {
+  // Safety: ensure current sheet always has initialized arrays
+  if (!Array.isArray(columns[currentSheet])) columns[currentSheet] = [];
+  if (!grades[currentSheet]) grades[currentSheet] = {};
+  if (!colIdCounters[currentSheet]) colIdCounters[currentSheet] = 0;
+
+  const students = SHEETS[currentSheet];
+  const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  const filtered = students.map((s, i) => ({ ...s, idx: i }))
+    .filter(s => !search || s.apellidos.toLowerCase().includes(search) || s.nombres.toLowerCase().includes(search));
+
+  renderThead(filtered);
+  renderTbody(filtered, students);
+  updateStats(students);
+}
+
+function renderThead(filtered) {
+  const thead = document.getElementById('thead');
+
+  // Row 1: category spans
+  const cats = ['cat1','cat2','cat3','cat4'];
+  let catCells = `<th class="th-fixed-1 cat-final" rowspan="2">#</th>
+    <th class="th-fixed-2 cat-final" rowspan="2" style="text-align:left;padding:0 10px">APELLIDOS</th>
+    <th class="th-fixed-3 cat-final" rowspan="2" style="text-align:left;padding:0 10px">NOMBRES</th>
+    <th class="cat-final" rowspan="2" style="min-width:36px;text-align:center" title="Eliminar"></th>`;
+
+  cats.forEach(cat => {
+    const cols = columns[currentSheet].filter(c => c.cat === cat);
+    const span = cols.length + 1; // +1 for add-col btn / subtotal
+    const cfg = CAT_CONFIG[cat];
+    catCells += `<th class="${cat}" colspan="${span}" style="text-align:center; padding:6px 8px;">
+      ${cfg.label} <span style="opacity:0.8">(${Math.round(cfg.weight*100)}%)</span>
+      <button class="add-col-btn" onclick="openAddColModalCat('${cat}')">+ Agregar</button>
+    </th>`;
+  });
+  catCells += `<th class="cat-final" rowspan="2" style="min-width:80px; text-align:center; padding:0 10px">NOTA<br>FINAL</th>`;
+
+  // Row 2: individual col headers
+  let colCells = '';
+  cats.forEach(cat => {
+    const cols = columns[currentSheet].filter(c => c.cat === cat);
+    cols.forEach(col => {
+      colCells += `<th class="col-${cat}" style="min-width:72px; border:1px solid var(--border)">
+        <div class="col-title-wrap" onclick="openEditColModal(${col.id})">
+          <span class="col-name">${col.name}</span>
+          <span class="col-pct">${col.weight}%</span>
+        </div>
+      </th>`;
+    });
+    // subtotal col
+    colCells += `<th class="col-${cat}" style="min-width:68px; border:1px solid var(--border); font-size:0.72rem; font-weight:700; color: var(--${cat}); padding:0 6px">Sub.</th>`;
+  });
+
+  thead.innerHTML = `<tr class="cat-header">${catCells}</tr><tr class="col-header">${colCells}</tr>`;
+}
+
+function renderTbody(filtered, allStudents) {
+  const tbody = document.getElementById('tbody');
+  const cats = ['cat1','cat2','cat3','cat4'];
+  const sheetGrades = grades[currentSheet];
+
+  tbody.innerHTML = filtered.map(s => {
+    const g = sheetGrades[s.idx] || {};
+
+    let cells = `<td class="td-sticky-1 td-num">${s.idx + 1}</td>
+      <td class="td-sticky-2 td-name">${s.apellidos}</td>
+      <td class="td-sticky-3 td-name" style="color:var(--text-muted)">${s.nombres}</td>
+      <td style="text-align:center; padding:0 4px; width:36px;"><button class="del-student-btn" onclick="deleteStudent(${s.idx})" title="Eliminar estudiante">✕</button></td>`;
+
+    const catWeightedSubs = {};
+
+    cats.forEach(cat => {
+      const cols = columns[currentSheet].filter(c => c.cat === cat);
+      let catNums = [];
+
+      cols.forEach(col => {
+        const val = g[col.id] !== undefined ? g[col.id] : '';
+        const numVal = parseFloat(val);
+        const cls = gradeClass(numVal);
+        cells += `<td class="col-${cat}">
+          <input class="grade-input ${cls}" type="number" min="0" max="5" step="0.1"
+            value="${val}" placeholder="—"
+            onchange="setGrade(${s.idx}, ${col.id}, this.value, this)"
+            onfocus="this.select()">
+        </td>`;
+        if (!isNaN(numVal)) catNums.push({ val: numVal, w: col.weight });
+      });
+
+      // subtotal for this cat
+      let sub = null;
+      if (catNums.length > 0) {
+        const totalW = catNums.reduce((a, x) => a + x.w, 0);
+        if (totalW > 0) {
+          sub = catNums.reduce((a, x) => a + x.val * (x.w / totalW), 0);
+        }
+      }
+      catWeightedSubs[cat] = sub;
+      const subDisp = sub !== null ? sub.toFixed(2) : '—';
+      const subCls = gradeClass(sub);
+      cells += `<td class="col-${cat}" style="text-align:center; font-weight:700; font-size:0.8rem; padding:0 4px">
+        <span class="${subCls}">${subDisp}</span>
+      </td>`;
+    });
+
+    // Final grade
+    let final = null;
+    let hasAny = false;
+    cats.forEach(cat => {
+      if (catWeightedSubs[cat] !== null) {
+        hasAny = true;
+        final = (final || 0) + catWeightedSubs[cat] * CAT_CONFIG[cat].weight;
+      }
+    });
+
+    // normalize final based on cats that have data
+    if (hasAny) {
+      const totalWeight = cats.reduce((a, cat) => catWeightedSubs[cat] !== null ? a + CAT_CONFIG[cat].weight : a, 0);
+      if (totalWeight > 0) final = final / totalWeight;
+    }
+
+    const finalDisp = final !== null ? final.toFixed(2) : '—';
+    const finalCls = gradeClass(final);
+    const finalLbl = gradeLabel(final);
+    cells += `<td class="col-final final-cell"><span class="${finalCls}">${finalDisp}</span><br><span style="font-size:0.62rem; font-weight:700; opacity:0.85; letter-spacing:0.3px">${finalLbl}</span></td>`;
+
+    return `<tr>${cells}</tr>`;
+  }).join('');
+}
+
+function updateStats(students) {
+  document.getElementById('statCourse').textContent = currentSheet;
+  document.getElementById('statCount').textContent = students.length;
+
+  const sheetGrades = grades[currentSheet];
+  const cats = ['cat1','cat2','cat3','cat4'];
+  let finals = [];
+
+  students.forEach((s, idx) => {
+    const g = sheetGrades[idx] || {};
+    let catWeightedSubs = {};
+    cats.forEach(cat => {
+      const cols = columns[currentSheet].filter(c => c.cat === cat);
+      let catNums = cols.map(col => {
+        const val = parseFloat(g[col.id]);
+        return isNaN(val) ? null : { val, w: col.weight };
+      }).filter(Boolean);
+      if (catNums.length > 0) {
+        const totalW = catNums.reduce((a, x) => a + x.w, 0);
+        catWeightedSubs[cat] = totalW > 0 ? catNums.reduce((a, x) => a + x.val * (x.w / totalW), 0) : null;
+      } else catWeightedSubs[cat] = null;
+    });
+    let final = null;
+    let hasAny = false;
+    cats.forEach(cat => {
+      if (catWeightedSubs[cat] !== null) {
+        hasAny = true;
+        final = (final || 0) + catWeightedSubs[cat] * CAT_CONFIG[cat].weight;
+      }
+    });
+    if (hasAny) {
+      const tw = cats.reduce((a, cat) => catWeightedSubs[cat] !== null ? a + CAT_CONFIG[cat].weight : a, 0);
+      if (tw > 0) finals.push(final / tw);
+    }
+  });
+
+  if (finals.length > 0) {
+    const avg = finals.reduce((a, b) => a + b, 0) / finals.length;
+    document.getElementById('statAvg').textContent = avg.toFixed(2);
+    document.getElementById('statPass').textContent = finals.filter(f => f >= 3.0).length + ' / ' + finals.length;
+    document.getElementById('statFail').textContent = finals.filter(f => f < 3.0).length;
+  } else {
+    document.getElementById('statAvg').textContent = '—';
+    document.getElementById('statPass').textContent = '—';
+    document.getElementById('statFail').textContent = '—';
+  }
+}
+
+// ─── GRADES ─────────────────────────────────────────────────────────
+function setGrade(studentIdx, colId, value, input) {
+  if (!grades[currentSheet][studentIdx]) grades[currentSheet][studentIdx] = {};
+  const num = parseFloat(value);
+  if (value === '' || isNaN(num)) {
+    delete grades[currentSheet][studentIdx][colId];
+    input.value = '';
+    input.className = 'grade-input';
+  } else {
+    const clamped = Math.max(0, Math.min(5, num));
+    grades[currentSheet][studentIdx][colId] = clamped;
+    input.value = clamped;
+    input.className = 'grade-input ' + gradeClass(clamped);
+  }
+  // Re-render and schedule sync
+  renderTable();
+  schedulSync();
+}
+
+// ─── COLUMNS ────────────────────────────────────────────────────────
+let pendingCat = null;
+
+function openAddColModal() { pendingCat = null; openModal('addColModal'); }
+function openAddColModalCat(cat) {
+  pendingCat = cat;
+  document.getElementById('newColCat').value = cat;
+  openModal('addColModal');
+}
+
+function addColumn() {
+  const name = document.getElementById('newColName').value.trim();
+  const cat = document.getElementById('newColCat').value;
+  const weight = parseFloat(document.getElementById('newColWeight').value) || 100;
+  if (!name) { showToast('⚠ Ingresa un nombre para la actividad'); return; }
+  columns[currentSheet].push({ id: ++colIdCounters[currentSheet], name, cat, weight });
+  closeModal('addColModal');
+  document.getElementById('newColName').value = '';
+  document.getElementById('newColWeight').value = 100;
+  updateClaseCounter();
+  renderTable();
+  showToast(`✓ Actividad "${name}" agregada`);
+  schedulSync();
+}
+
+function openEditColModal(colId) {
+  const col = columns[currentSheet].find(c => c.id === colId);
+  if (!col) return;
+  document.getElementById('editColName').value = col.name;
+  document.getElementById('editColCat').value = col.cat;
+  document.getElementById('editColWeight').value = col.weight;
+  document.getElementById('editColIdx').value = colId;
+  openModal('editColModal');
+}
+
+function saveEditColumn() {
+  const colId = parseInt(document.getElementById('editColIdx').value);
+  const col = columns[currentSheet].find(c => c.id === colId);
+  if (!col) return;
+  col.name = document.getElementById('editColName').value.trim() || col.name;
+  col.cat = document.getElementById('editColCat').value;
+  col.weight = parseFloat(document.getElementById('editColWeight').value) || 100;
+  closeModal('editColModal');
+  renderTable();
+  showToast('✓ Actividad actualizada');
+  schedulSync();
+}
+
+function deleteColumn() {
+  const colId = parseInt(document.getElementById('editColIdx').value);
+  columns[currentSheet] = columns[currentSheet].filter(c => c.id !== colId);
+  // Remove grades for this col
+  Object.keys(grades).forEach(sheet => {
+    Object.keys(grades[sheet]).forEach(idx => {
+      delete grades[sheet][idx][colId];
+    });
+  });
+  closeModal('editColModal');
+  updateClaseCounter();
+  renderTable();
+  showToast('🗑 Actividad eliminada');
+  schedulSync();
+}
+
+// ─── MISC ────────────────────────────────────────────────────────────
+function clearAllGrades() {
+  if (!confirm(`¿Limpiar todas las notas del curso ${currentSheet}?`)) return;
+  grades[currentSheet] = {};
+  renderTable();
+  showToast('🗑 Notas limpiadas');
+  schedulSync();
+}
+
+function filterStudents() { renderTable(); }
+
+function exportCSV() {
+  const students = SHEETS[currentSheet];
+  const cats = ['cat1','cat2','cat3','cat4'];
+  const sheetGrades = grades[currentSheet];
+
+  let header = ['#', 'APELLIDOS', 'NOMBRES'];
+  cats.forEach(cat => {
+    columns[currentSheet].filter(c => c.cat === cat).forEach(col => header.push(`${col.name} (${CAT_CONFIG[cat].label})`));
+    header.push(`Subtotal ${CAT_CONFIG[cat].label}`);
+  });
+  header.push('NOTA FINAL');
+
+  const rows = [header];
+  students.forEach((s, idx) => {
+    const g = sheetGrades[idx] || {};
+    let row = [idx+1, s.apellidos, s.nombres];
+    let catWeightedSubs = {};
+    cats.forEach(cat => {
+      const cols = columns[currentSheet].filter(c => c.cat === cat);
+      let catNums = [];
+      cols.forEach(col => {
+        const val = g[col.id] !== undefined ? g[col.id] : '';
+        row.push(val);
+        const num = parseFloat(val);
+        if (!isNaN(num)) catNums.push({ val: num, w: col.weight });
+      });
+      let sub = null;
+      if (catNums.length > 0) {
+        const tw = catNums.reduce((a, x) => a + x.w, 0);
+        sub = tw > 0 ? catNums.reduce((a, x) => a + x.val * (x.w / tw), 0) : null;
+      }
+      catWeightedSubs[cat] = sub;
+      row.push(sub !== null ? sub.toFixed(2) : '');
+    });
+    let final = null, tw = 0;
+    cats.forEach(cat => {
+      if (catWeightedSubs[cat] !== null) { final = (final||0) + catWeightedSubs[cat] * CAT_CONFIG[cat].weight; tw += CAT_CONFIG[cat].weight; }
+    });
+    row.push(final !== null && tw > 0 ? (final/tw).toFixed(2) : '');
+    rows.push(row);
+  });
+
+  const csv = rows.map(r => r.map(x => `"${x}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `notas_${currentSheet.replace(/ /g,'_')}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('⬇ CSV exportado correctamente');
+}
+
+// ─── ESCALA VALORATIVA ──────────────────────────────────────────────
+// 1.0–2.9 Bajo | 3.0–3.9 Básico | 4.0–4.5 Alto | 4.6–5.0 Superior
+function gradeClass(val) {
+  if (isNaN(val) || val === null) return '';
+  if (val < 3.0) return 'grade-bajo';
+  if (val < 4.0) return 'grade-basico';
+  if (val <= 4.5) return 'grade-alto';
+  return 'grade-superior';
+}
+function gradeLabel(val) {
+  if (isNaN(val) || val === null) return '';
+  if (val < 3.0) return 'BAJO';
+  if (val < 4.0) return 'BÁSICO';
+  if (val <= 4.5) return 'ALTO';
+  return 'SUPERIOR';
+}
+
+// ─── ESTUDIANTES ─────────────────────────────────────────────────────
+function openAddStudentModal() {
+  document.getElementById('addStudentCurso').textContent = currentSheet;
+  document.getElementById('newStudentApellidos').value = '';
+  document.getElementById('newStudentNombres').value = '';
+  openModal('addStudentModal');
+}
+
+function addStudent() {
+  const apellidos = document.getElementById('newStudentApellidos').value.trim().toUpperCase();
+  const nombres   = document.getElementById('newStudentNombres').value.trim().toUpperCase();
+  if (!apellidos) { showToast('⚠ Ingresa los apellidos del estudiante'); return; }
+  if (!nombres)   { showToast('⚠ Ingresa los nombres del estudiante'); return; }
+  SHEETS[currentSheet].push({ apellidos, nombres });
+  closeModal('addStudentModal');
+  renderTable();
+  showToast(`✓ Estudiante ${apellidos} ${nombres} agregado`);
+  schedulSync();
+}
+
+function deleteStudent(idx) {
+  const s = SHEETS[currentSheet][idx];
+  if (!confirm(`¿Eliminar a ${s.apellidos} ${s.nombres} del curso ${currentSheet}?\n\nSus notas también serán eliminadas.`)) return;
+
+  // Remove student from list
+  SHEETS[currentSheet].splice(idx, 1);
+
+  // Re-index grades: shift all entries after idx down by 1
+  const sheetGrades = grades[currentSheet];
+  const newGrades = {};
+  Object.keys(sheetGrades).forEach(key => {
+    const k = parseInt(key);
+    if (k < idx) newGrades[k] = sheetGrades[k];
+    else if (k > idx) newGrades[k - 1] = sheetGrades[k];
+    // k === idx is dropped
+  });
+  grades[currentSheet] = newGrades;
+
+  renderTable();
+  showToast(`🗑 Estudiante eliminado`);
+  schedulSync();
+}
+
+// ─── QUICK ADD CLASE ────────────────────────────────────────────────
+function quickAddClase() {
+  const claseNums = columns[currentSheet]
+    .filter(c => c.cat === 'cat1' && /^Clase \d+$/.test(c.name))
+    .map(c => parseInt(c.name.replace('Clase ', '')));
+  const next = claseNums.length > 0 ? Math.max(...claseNums) + 1 : 1;
+  columns[currentSheet].push({ id: ++colIdCounters[currentSheet], name: `Clase ${next}`, cat: 'cat1', weight: 100 / (claseNums.length + 1) });
+  updateClaseCounter();
+  renderTable();
+  showToast(`✓ Clase ${next} agregada al 70%`);
+  schedulSync();
+  // Scroll table to right to show new column
+  setTimeout(() => {
+    const wrap = document.querySelector('.table-wrap');
+    if (wrap) wrap.scrollLeft = wrap.scrollWidth;
+  }, 50);
+}
+
+function updateClaseCounter() {
+  const count = (columns[currentSheet] || []).filter(c => c.cat === 'cat1').length;
+  const el = document.getElementById('claseCounter');
+  if (el) el.textContent = `📋 ${count} clase${count !== 1 ? 's' : ''} en el 70%`;
+}
+
+// ─── MODALS ─────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// ─── TOAST ──────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── GOOGLE SHEETS SYNC ─────────────────────────────────────────────
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwLBGzpaKpgpjpspg14li7GIZJpOK8o7od58ylShHgEH4FJyV5ekWu187c0Hfykcj1R/exec";
+let syncTimer = null;
+let syncPending = false;
+
+function schedulSync() {
+  // Debounce: wait 1.5s after last change before syncing
+  clearTimeout(syncTimer);
+  syncPending = true;
+  setSyncStatus('pending');
+  syncTimer = setTimeout(() => syncToSheets(), 1500);
+}
+
+function setSyncStatus(status) {
+  const bar = document.getElementById('syncBar');
+  const icon = document.getElementById('syncIcon');
+  const msg  = document.getElementById('syncMsg');
+  const spin = document.getElementById('syncSpinner');
+  if (!bar) return;
+  if (status === 'loading') {
+    bar.style.background = '#eff6ff';
+    bar.style.borderBottomColor = '#bfdbfe';
+    bar.style.color = '#1e40af';
+    icon.textContent = '⏳';
+    msg.textContent = 'Cargando notas desde Google Sheets...';
+    spin.style.display = 'inline';
+  } else if (status === 'pending') {
+    bar.style.background = '#fefce8';
+    bar.style.borderBottomColor = '#fde68a';
+    bar.style.color = '#92400e';
+    icon.textContent = '✏️';
+    msg.textContent = 'Guardando cambios...';
+    spin.style.display = 'inline';
+  } else if (status === 'ok') {
+    bar.style.background = '#f0fdf4';
+    bar.style.borderBottomColor = '#bbf7d0';
+    bar.style.color = '#166534';
+    icon.textContent = '✅';
+    const now = new Date();
+    msg.textContent = `Guardado en Google Sheets — ${now.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'})}`;
+    spin.style.display = 'none';
+  } else if (status === 'error') {
+    bar.style.background = '#fef2f2';
+    bar.style.borderBottomColor = '#fecaca';
+    bar.style.color = '#991b1b';
+    icon.textContent = '❌';
+    msg.textContent = 'Error al guardar — revisa tu conexión o el Apps Script';
+    spin.style.display = 'none';
+  }
+}
+
+function buildSyncPayload(sheetName) {
+  const students = SHEETS[sheetName];
+  const cats = ['cat1','cat2','cat3','cat4'];
+  const sheetGrades = grades[sheetName] || {};
+
+  // Build header: col names per category
+  const colHeaders = [];
+  cats.forEach(cat => {
+    columns[sheetName].filter(c => c.cat === cat).forEach(col => {
+      colHeaders.push(`${col.name} (${CAT_CONFIG[cat].label})`);
+    });
+    colHeaders.push(`Subtotal ${CAT_CONFIG[cat].label} (${Math.round(CAT_CONFIG[cat].weight*100)}%)`);
+  });
+
+  const filas = students.map((s, idx) => {
+    const g = sheetGrades[idx] || {};
+    const row = [idx + 1, s.apellidos, s.nombres];
+    const catSubs = {};
+
+    cats.forEach(cat => {
+      const cols = columns[currentSheet].filter(c => c.cat === cat);
+      const catNums = [];
+      cols.forEach(col => {
+        const val = g[col.id] !== undefined ? g[col.id] : '';
+        row.push(val === '' ? '' : val);
+        const n = parseFloat(val);
+        if (!isNaN(n)) catNums.push({ val: n, w: col.weight });
+      });
+      let sub = null;
+      if (catNums.length > 0) {
+        const tw = catNums.reduce((a, x) => a + x.w, 0);
+        sub = tw > 0 ? catNums.reduce((a, x) => a + x.val * (x.w / tw), 0) : null;
+      }
+      catSubs[cat] = sub;
+      row.push(sub !== null ? parseFloat(sub.toFixed(2)) : '');
+    });
+
+    // Final grade
+    let final = null;
+    let tw = 0;
+    cats.forEach(cat => {
+      if (catSubs[cat] !== null) {
+        final = (final || 0) + catSubs[cat] * CAT_CONFIG[cat].weight;
+        tw += CAT_CONFIG[cat].weight;
+      }
+    });
+    const finalVal = (final !== null && tw > 0) ? final / tw : null;
+    row.push(finalVal !== null ? parseFloat(finalVal.toFixed(2)) : '');
+    row.push(finalVal !== null ? gradeLabel(finalVal) : '');
+    return row;
+  });
+
+  return { curso: sheetName, columnas: colHeaders, filas };
+}
+
+async function syncToSheets() {
+  // Sync ALL sheets so Sheets always has everything
+  setSyncStatus('pending');
+  try {
+    const allSheets = Object.keys(SHEETS);
+    for (const sheetName of allSheets) {
+      const payload = buildSyncPayload(sheetName);
+      await fetch(SHEETS_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Apps Script requires no-cors
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
+    setSyncStatus('ok');
+    syncPending = false;
+  } catch (err) {
+    console.error('Sync error:', err);
+    setSyncStatus('error');
+  }
+}
+
+// ─── LOAD FROM SHEETS ───────────────────────────────────────────────
+async function loadFromSheets() {
+  setSyncStatus('loading');
+  try {
+    // 1. Load column config
+    const configRes = await fetch(SHEETS_URL + '?t=' + Date.now(), { method: 'GET' });
+    const configData = await configRes.json();
+
+    if (configData.config) {
+      const cfg = configData.config;
+      // Restore columns — ensure per-sheet structure
+      const loadedCols = cfg.columns || {};
+      if (Array.isArray(loadedCols)) {
+        // Old format (global array) — migrate: assign to first sheet only
+        Object.keys(SHEETS).forEach(s => { columns[s] = []; });
+      } else {
+        Object.keys(SHEETS).forEach(s => {
+          columns[s] = Array.isArray(loadedCols[s]) ? loadedCols[s] : [];
+        });
+      }
+      // Restore counters
+      const loadedCounters = cfg.colIdCounters || cfg.colIdCounter || {};
+      if (typeof loadedCounters === 'number') {
+        Object.keys(SHEETS).forEach(s => { colIdCounters[s] = loadedCounters; });
+      } else {
+        Object.keys(SHEETS).forEach(s => {
+          colIdCounters[s] = loadedCounters[s] || 0;
+        });
+      }
+      // Restore grades
+      const savedGrades = cfg.grades || {};
+      Object.keys(savedGrades).forEach(sheet => {
+        grades[sheet] = {};
+        Object.keys(savedGrades[sheet]).forEach(idx => {
+          grades[sheet][idx] = savedGrades[sheet][idx];
+        });
+      });
+    }
+    // Safety: ensure every sheet has initialized arrays
+    Object.keys(SHEETS).forEach(s => {
+      if (!Array.isArray(columns[s])) columns[s] = [];
+      if (!grades[s]) grades[s] = {};
+      if (!colIdCounters[s]) colIdCounters[s] = 0;
+    });
+
+    setSyncStatus('ok');
+  } catch(err) {
+    console.warn('No se pudo cargar desde Sheets:', err);
+    setSyncStatus('error');
+  }
+  updateClaseCounter();
+  renderTabs();
+  renderTable();
+}
+
+// Override schedulSync to also save config (columns + grades)
+const _originalSync = syncToSheets;
+async function syncToSheets() {
+  setSyncStatus('pending');
+  try {
+    // Save column config + all grades as a single config object
+    const configPayload = {
+      columns,
+      colIdCounters,
+      grades
+    };
+    await fetch(SHEETS_URL + '?saveconfig=1', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ curso: '__config__', config: configPayload, columnas: [], filas: [] })
+    });
+
+    // Also sync each course sheet for human-readable view
+    const allSheets = Object.keys(SHEETS);
+    for (const sheetName of allSheets) {
+      const payload = buildSyncPayload(sheetName);
+      await fetch(SHEETS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }
+    setSyncStatus('ok');
+    syncPending = false;
+  } catch (err) {
+    console.error('Sync error:', err);
+    setSyncStatus('error');
+  }
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────
+updateClaseCounter();
+loadFromSheets();
+</script>
+</body>
+</html>
